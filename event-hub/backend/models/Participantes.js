@@ -54,3 +54,4 @@ const Participantes = sequelize.define('Participantes', {
 });
 
 module.exports = Participantes;
+
