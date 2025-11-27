@@ -1,4 +1,4 @@
-const brcrypt = require('bcrypt')
+const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const { Organizador } = require('../models')
 
@@ -22,16 +22,22 @@ module.exports = {
                 return res.status(403).json({ message: 'Usuário inativo.' })
             }
 
-            const senhaCorreta = await brcrypt.compare(senha, user.senha)
+            const senhaCorreta = await bcrypt.compare(senha, user.senha_hash)
             if(!senhaCorreta){
                 return res.status(401).json({ message: 'Credenciais inválidas.' })
             }
-            const token = jwt.sign({ id: user.id, email: user.email }, JWT_SECRET, { expiresIn: JWT_EXPIRES })
+
+            const token = jwt.sign(
+                { id: user.id, email: user.email, perfil: user.perfil },
+                JWT_SECRET,
+                { expiresIn: JWT_EXPIRES }
+            )
 
             return res.json({
-                mensage: 'Login realizado com sucesso.',
+                message: 'Login realizado com sucesso.',
                 token
             })
+
         }catch(error){
             console.error(error)
             return res.status(500).json({ message: 'Erro interno do servidor.' })
