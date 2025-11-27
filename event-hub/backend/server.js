@@ -13,6 +13,7 @@ const participantesRoutes = require('./routes/participantesRoutes')
 
 app.use('/api/auth', authRoutes)
 app.use('/api/participantes', participantesRoutes)
+app.use('/api/eventos', require('./routes/eventosRoutes'))
 
 app.get('/', (req, res) => {
     res.json({mensagem: 'API funcionando'})
