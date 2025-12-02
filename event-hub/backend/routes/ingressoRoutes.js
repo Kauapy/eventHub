@@ -1,19 +1,17 @@
 const express = require('express')
 const router = express.Router()
-const ingressosController = require('../controllers/ingressosController')
-const authMiddleware = require('../middlewares/authMiddleware')
-const checkRole = require("../middlewares/checkRole")
+const ingressosController = require('../controllers/ingressoController')
+const auth = require('../middlewares/authMiddleware')
+const { permitirPerfis } = require('../middlewares/checkRole')
 
+router.use(auth)
 
-router.use(authMiddleware)
-
-
-router.get('/evento/:id', ingressosController.ingressosEvento)
-router.get('/participante/:id', ingressosController.ingressosParticipante)
-router.get('/', ingressosController.listarIngressos)
-router.get('/:id', ingressosController.buscarIngresso)
-router.post('/', ingressosController.comprarIngresso)
-router.patch('/:id/checkin', checkRole("organizador"), ingressosController.checkinIngresso)
-router.patch('/:id/cancelar', checkRole("organizador"), ingressosController.cancelarIngresso)
+router.get('/evento/:id', permitirPerfis('admin', 'organizador', 'vendedor'), ingressosController.ingressosEvento)
+router.get('/participante/:id', permitirPerfis('admin', 'organizador', 'vendedor'), ingressosController.ingressosParticipante)
+router.get('/', permitirPerfis('admin', 'organizador', 'vendedor'), ingressosController.listarIngressos)
+router.post('/', permitirPerfis('admin', 'organizador', 'vendedor'), ingressosController.comprarIngresso)
+router.get('/:id', permitirPerfis('admin', 'organizador', 'vendedor'), ingressosController.buscarIngresso)
+router.patch('/:id/checkin', permitirPerfis('admin', 'organizador', 'vendedor'), ingressosController.checkinIngresso)
+router.patch('/:id/cancelar', permitirPerfis('admin', 'organizador', 'vendedor'), ingressosController.cancelarIngresso)
 
 module.exports = router

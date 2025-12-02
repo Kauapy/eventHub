@@ -1,19 +1,16 @@
 const express = require('express')
 const router = express.Router()
-const participantesController = require('../controllers/participantesController')
-const authMiddleware = require('../middlewares/authMiddleware')
-const checkRole = require("../middlewares/checkRole")
+const controller = require('../controllers/participantesController')
+const auth = require('../middlewares/authMiddleware')
+const { permitirPerfis } = require('../middlewares/checkRole')
 
+router.use(auth)
 
-router.use(authMiddleware)
-
-
-router.get('/', participantesController.listarParticipantes)
-router.get('/:id', participantesController.buscarParticipante)
-
-
-router.post('/', checkRole("organizador"), participantesController.criarParticipante)
-router.put('/:id', checkRole("organizador"), participantesController.atualizarParticipante)
-router.delete('/:id', checkRole("organizador"), participantesController.deletarParticipante)
+router.get('/:id/historico', permitirPerfis('admin', 'organizador'), controller.historico)
+router.get('/', permitirPerfis('admin', 'organizador'), controller.listar)
+router.get('/:id', permitirPerfis('admin', 'organizador'), controller.buscarUm)
+router.post('/', permitirPerfis('admin', 'organizador'), controller.criar)
+router.put('/:id', permitirPerfis('admin', 'organizador'), controller.atualizar)
+router.delete('/:id', permitirPerfis('admin', 'organizador'), controller.deletar)
 
 module.exports = router

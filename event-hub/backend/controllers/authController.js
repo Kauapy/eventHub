@@ -1,6 +1,6 @@
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
-const { Organizador } = require('../models')
+const Organizador = require('../models')
 
 const JWT_SECRET = process.env.JWT_SECRET || 'segredo_super_secreto'
 const JWT_EXPIRES = '1d'
@@ -10,7 +10,7 @@ module.exports = {
         try{
             const { email, senha } = req.body
 
-            if(!email || !senha){
+            if(!email || !senha_hash){
                 return res.status(400).json({ message: 'Email e senha são obrigatórios.' })
             }
 

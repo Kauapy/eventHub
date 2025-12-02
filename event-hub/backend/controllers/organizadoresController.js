@@ -1,33 +1,32 @@
 const bcrypt = require('bcryptjs')
-const { Organizador } = require('../models')  
+const Organizador = require('../models/Organizadores')
 
 module.exports = {
-    
+
     async listar(req, res) {
-        try {
+        try{
             const lista = await Organizador.findAll()
             return res.status(200).json(lista)
-        } catch (error) {
+        }catch (error){
             return res.status(500).json({
                 message: 'Erro ao listar organizadores',
                 error: error.message
             })
         }
     },
-
     
-    async criar(req, res) {
-        try {
+    async criar(req, res){
+        try{
             const { nome, email, senha } = req.body
 
-            if (!nome || !email || !senha) {
+            if(!nome || !email || !senha){
                 return res.status(400).json({
                     message: 'Nome, email e senha são obrigatórios'
                 })
             }
 
             const organizadorExistente = await Organizador.findOne({ where: { email } })
-            if (organizadorExistente) {
+            if(organizadorExistente){
                 return res.status(400).json({
                     message: 'Já existe um organizador com este email.'
                 })
@@ -38,7 +37,9 @@ module.exports = {
             const novoOrganizador = await Organizador.create({
                 nome,
                 email,
-                senha: senhaHash
+                senha_hash: senhaHash,
+                perfil: 'organizador',
+                status: true
             })
 
             return res.status(201).json({
@@ -46,7 +47,7 @@ module.exports = {
                 organizador: novoOrganizador
             })
 
-        } catch (error) {
+        }catch(error){
             return res.status(500).json({
                 message: 'Erro ao criar organizador',
                 error: error.message
@@ -54,20 +55,17 @@ module.exports = {
         }
     },
 
-    
-    async atualizar(req, res) {
-        try {
+    async atualizar(req, res){
+        try{
             const { id } = req.params
             const { nome, email, senha } = req.body
 
             const organizador = await Organizador.findByPk(id)
 
-            if (!organizador) {
+            if(!organizador){
                 return res.status(404).json({ message: 'Organizador não encontrado.' })
             }
-
-            
-            if (email && email !== organizador.email) {
+            if(email && email !== organizador.email){
                 const organizadorExistente = await Organizador.findOne({ where: { email } })
                 if (organizadorExistente) {
                     return res.status(400).json({
@@ -76,20 +74,22 @@ module.exports = {
                 }
             }
 
-            let dadosAtualizados = {
+            const dadosAtualizados = {
                 nome: nome ?? organizador.nome,
                 email: email ?? organizador.email
             }
-
-            if (senha) {
-                dadosAtualizados.senha = await bcrypt.hash(senha, 10)
+            if(senha){
+                dadosAtualizados.senha_hash = await bcrypt.hash(senha, 10)
             }
 
             await organizador.update(dadosAtualizados)
 
-            return res.json({ message: 'Organizador atualizado com sucesso' })
+            return res.json({
+                message: 'Organizador atualizado com sucesso',
+                organizador
+            })
 
-        } catch (error) {
+        }catch(error){
             return res.status(500).json({
                 message: 'Erro ao atualizar organizador',
                 error: error.message
@@ -97,22 +97,19 @@ module.exports = {
         }
     },
 
-    
-    async deletar(req, res) {
-        try {
+    async deletar(req, res){
+        try{
             const { id } = req.params
-
             const organizador = await Organizador.findByPk(id)
 
-            if (!organizador) {
+            if(!organizador){
                 return res.status(404).json({ message: 'Organizador não encontrado.' })
             }
 
             await organizador.destroy()
-
             return res.json({ message: 'Organizador deletado com sucesso' })
 
-        } catch (error) {
+        }catch(error){
             return res.status(500).json({
                 message: 'Erro ao deletar organizador',
                 error: error.message

@@ -1,8 +1,14 @@
-const Ingresso = require('../models/Ingressos')
+const Ingresso = require('../models/Ingresso')
 const Evento = require('../models/Evento')
 const Participante = require('../models/Participantes')
 const Organizador = require('../models/Organizadores')
-const sequelize = require('../database/database')
+const sequelize = require('../config/database')
+
+function gerarCodigoIngresso(eventoId){
+    const agora = Date.now()
+    const aleatorio = Math.floor(Math.random() * 90000) + 10000
+    return `EVT${eventoId}-${agora}-${aleatorio}`
+}
 
 module.exports = {
 
@@ -27,14 +33,14 @@ module.exports = {
         const transaction = await sequelize.transaction()
 
         try{
-            const { evento_id, participante_id, tipo, quantidade } = req.body
-            const vendedor_id = req.user.id
+            const { eventoId, participanteId, tipo, quantidade } = req.body
+            const vendedorId = req.user.id
 
-            if(!evento_id || !participante_id || !tipo || !quantidade){
+            if(!eventoId || !participanteId || !tipo || !quantidade){
                 return res.status(400).json({ message: 'Dados incompletos.' })
             }
 
-            const evento = await Evento.findByPk(evento_id, { transaction })
+            const evento = await Evento.findByPk(eventoId, { transaction })
 
             if(!evento){
                 return res.status(404).json({ message: 'Evento não encontrado.' })
@@ -44,16 +50,20 @@ module.exports = {
                 return res.status(400).json({ message: 'Não é possível vender ingressos para este evento.' })
             }
 
-            const participante = await Participante.findByPk(participante_id)
+            const participante = await Participante.findByPk(participanteId)
 
             if(!participante){
                 return res.status(404).json({ message: 'Participante não encontrado.' })
             }
 
             const vendidos = await Ingresso.sum('quantidade', {
-                where: { evento_id },
-                transaction
+            where: { 
+            eventoId,
+            status: ['confirmado', 'usado']
+            },
+            transaction
             }) || 0
+
 
             if(vendidos + quantidade > evento.capacidade){
                 return res.status(400).json({ message: 'Evento lotado ou quantidade excede a capacidade.' })
@@ -71,17 +81,28 @@ module.exports = {
 
             const valorTotal = valorUnitario * quantidade
 
+            let codigo
+            let existe
+            do{
+            codigo = gerarCodigoIngresso(eventoId)
+            existe = await Ingresso.findOne({
+            where: { codigo_ingresso: codigo },
+            transaction: transaction
+            })
+            }while(existe)
+
             const ingresso = await Ingresso.create({
-                evento_id,
-                participante_id,
-                vendedor_id,
-                tipo,
-                quantidade,
-                valor_unitario: valorUnitario,
-                valor_total: valorTotal,
-                status: 'confirmado',
-                data_compra: new Date()
-            },{ transaction })
+            codigo_ingresso: codigo,
+            eventoId: eventoId,
+            participanteId: participanteId,
+            vendedorId: vendedorId,
+            tipo: tipo,
+            quantidade: quantidade,
+            valor_unitario: valorUnitario,
+            valor_total: valorTotal,
+            status: 'confirmado',
+            data_compra: new Date()
+            },{ transaction: transaction })
 
             if(vendidos + quantidade === evento.capacidade){
                 await evento.update({ status: 'esgotado' }, { transaction })
@@ -98,7 +119,6 @@ module.exports = {
             return res.status(500).json({ message: 'Erro ao vender ingresso', error: error.message })
         }
     },
-
 
     async buscarIngresso(req, res){
         try{
@@ -136,7 +156,7 @@ module.exports = {
             }
 
             const hoje = new Date().toISOString().slice(0, 10)
-            const diaEvento = ingresso.evento.data_evento.toISOString().slice(0, 10)
+            const diaEvento = new Date(ingresso.evento.data_evento).toISOString().slice(0, 10)
 
             if(hoje !== diaEvento){
                 return res.status(400).json({ message: 'Check-in só pode ser feito no dia do evento.' })
@@ -179,8 +199,16 @@ module.exports = {
             }
 
             await ingresso.update({
-                status: 'cancelado'
+            status: 'cancelado'
             })
+
+            const vendidos = await Ingresso.sum('quantidade', {
+            where: { eventoId: ingresso.eventoId, status: ['confirmado', 'usado'] }
+            }) || 0
+
+            if (vendidos < ingresso.evento.capacidade && ingresso.evento.status === 'esgotado') {
+            await ingresso.evento.update({ status: 'aberto' })
+            }
             return res.json({ message: 'Ingresso cancelado com sucesso.' })
 
         }catch(error){
@@ -194,7 +222,7 @@ module.exports = {
             const { id } = req.params
 
             const ingressos = await Ingresso.findAll({
-                where: { evento_id: id },
+                where: { eventoId: id },
                 include: { model: Participante, as: 'participante' }
             })
             return res.json(ingressos)
@@ -210,7 +238,7 @@ module.exports = {
             const { id } = req.params
 
             const ingressos = await Ingresso.findAll({
-                where: { participante_id: id },
+                where: { participanteId: id },
                 include: { model: Evento, as: 'evento' }
             })
             return res.json(ingressos)
