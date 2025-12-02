@@ -1,5 +1,6 @@
-const jwt = require('jsonwebtoken')
-const JWT_SECRET = process.env.JWT_SECRET || 'segredo_super_secreto'
+import jwt from 'jsonwebtoken';
+const JWT_SECRET = process.env.JWT_SECRET || 'segredo_super_secreto';
+
 
 module.exports = (req, res, next) => {
     const authHeader = req.headers.authorization

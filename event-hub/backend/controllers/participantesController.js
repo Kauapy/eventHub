@@ -1,6 +1,7 @@
-const Participante = require('../models/Participantes')
-const Ingresso = require('../models/Ingresso')
-const Evento = require('../models/Evento')
+import Participante from '../models/Participantes.js';
+import Ingresso from '../models/Ingresso.js';
+import Evento from '../models/Evento.js';
+
 
 module.exports = {
 

@@ -1,6 +1,6 @@
-const { DataTypes } = require('sequelize');
-const sequelize = require('../database/database');
-const Organizador = require('./Organizadores');
+import Participante from './Participantes.js';
+import Evento from './Evento.js';
+import Ingresso from './Ingresso.js';
 
 
 const Participantes = sequelize.define('Participantes', {

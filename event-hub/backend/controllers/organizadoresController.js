@@ -1,5 +1,6 @@
-const bcrypt = require('bcryptjs')
-const Organizador = require('../models/Organizadores')
+import bcrypt from 'bcryptjs';
+import Organizador from '../models/Organizadores.js';
+
 
 module.exports = {
 

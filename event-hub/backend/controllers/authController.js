@@ -1,9 +1,10 @@
-const bcrypt = require('bcrypt')
-const jwt = require('jsonwebtoken')
-const Organizador = require('../models')
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+import Organizador from '../models/Organizadores.js';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'segredo_super_secreto'
-const JWT_EXPIRES = '1d'
+const JWT_SECRET = process.env.JWT_SECRET || 'segredo_super_secreto';
+const JWT_EXPIRES = '1d';
+
 
 module.exports = {
     async login(req, res){

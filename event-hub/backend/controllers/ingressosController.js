@@ -1,8 +1,9 @@
-const Ingresso = require('../models/Ingresso')
-const Evento = require('../models/Evento')
-const Participante = require('../models/Participantes')
-const Organizador = require('../models/Organizadores')
-const sequelize = require('../config/database')
+import Ingresso from '../models/Ingresso.js';
+import Evento from '../models/Evento.js';
+import Participante from '../models/Participantes.js';
+import Organizador from '../models/Organizadores.js';
+import sequelize from '../config/database.js';
+
 
 function gerarCodigoIngresso(eventoId){
     const agora = Date.now()

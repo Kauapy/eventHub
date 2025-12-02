@@ -1,16 +1,17 @@
-const express = require('express')
-const router = express.Router()
-const controller = require('../controllers/participantesController')
-const auth = require('../middlewares/authMiddleware')
-const { permitirPerfis } = require('../middlewares/checkRole')
+import express from 'express';
+import controller from '../controllers/participantesController.js';
+import auth from '../middlewares/authMiddleware.js';
+import { permitirPerfis } from '../middlewares/checkRole.js';
 
-router.use(auth)
+const router = express.Router();
 
-router.get('/:id/historico', permitirPerfis('admin', 'organizador'), controller.historico)
-router.get('/', permitirPerfis('admin', 'organizador'), controller.listar)
-router.get('/:id', permitirPerfis('admin', 'organizador'), controller.buscarUm)
-router.post('/', permitirPerfis('admin', 'organizador'), controller.criar)
-router.put('/:id', permitirPerfis('admin', 'organizador'), controller.atualizar)
-router.delete('/:id', permitirPerfis('admin', 'organizador'), controller.deletar)
+router.use(auth);
 
-module.exports = router
+router.get('/:id/historico', permitirPerfis('admin', 'organizador'), controller.historico);
+router.get('/', permitirPerfis('admin', 'organizador'), controller.listar);
+router.get('/:id', permitirPerfis('admin', 'organizador'), controller.buscarUm);
+router.post('/', permitirPerfis('admin', 'organizador'), controller.criar);
+router.put('/:id', permitirPerfis('admin', 'organizador'), controller.atualizar);
+router.delete('/:id', permitirPerfis('admin', 'organizador'), controller.deletar);
+
+export default router;

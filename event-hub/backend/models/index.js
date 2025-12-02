@@ -1,7 +1,7 @@
-const Organizador = require("./Organizadores")
-const Participante = require("./Participantes")
-const Evento = require("./Evento")
-const Ingresso = require("./Ingresso")
+import Organizador from './Organizadores.js';
+import Participante from './Participantes.js';
+import Evento from './Evento.js';
+import Ingresso from './Ingresso.js';
 
 Organizador.hasMany(Participante,{foreignKey: "createdBy", as: "participantesCriados"})
 Organizador.hasMany(Participante,{foreignKey: "updatedBy", as: "participantesAtualizados"})

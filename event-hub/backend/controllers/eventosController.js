@@ -1,5 +1,6 @@
-const Evento = require('../models/Evento')
-const Ingresso = require('../models/Ingresso')
+import Evento from '../models/Evento.js';
+import Ingresso from '../models/Ingresso.js';
+
 
 exports.listar = async (req, res) => {
     try {
