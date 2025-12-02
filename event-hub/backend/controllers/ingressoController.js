@@ -1,7 +1,7 @@
 import Ingresso from '../models/Ingresso.js';
 import Evento from '../models/Evento.js';
-import Participante from '../models/Participantes.js';
-import Organizador from '../models/Organizadores.js';
+import Participante from '../models/Participante.js';
+import Organizador from '../models/Organizador.js';
 import sequelize from '../config/database.js';
 
 

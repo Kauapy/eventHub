@@ -1,5 +1,5 @@
 import bcrypt from 'bcryptjs';
-import Organizador from '../models/Organizadores.js';
+import Organizador from '../models/Organizador.js';
 
 
 module.exports = {

@@ -1,4 +1,4 @@
-import Participante from '../models/Participantes.js';
+import Participante from '../models/Participante.js';
 import Ingresso from '../models/Ingresso.js';
 import Evento from '../models/Evento.js';
 

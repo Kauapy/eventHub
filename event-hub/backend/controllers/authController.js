@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import Organizador from '../models/Organizadores.js';
+import Organizador from '../models/Organizador.js';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'segredo_super_secreto';
 const JWT_EXPIRES = '1d';

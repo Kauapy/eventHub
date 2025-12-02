@@ -1,6 +1,6 @@
 import { DataTypes } from 'sequelize';
 import sequelize from '../config/database.js';
-import Organizador from './Organizadores.js';
+import Organizador from './Organizador.js';
 
 const Evento = sequelize.define('Eventos', {
     id: {

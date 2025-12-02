@@ -1,5 +1,6 @@
 import { DataTypes } from 'sequelize';
 import sequelize from '../config/database.js';
+
 const Organizador = sequelize.define('Organizadores', {
     id: {
         type: DataTypes.INTEGER,
@@ -40,4 +41,4 @@ const Organizador = sequelize.define('Organizadores', {
     timestamps: true            
 });
 
-module.exports = Organizador;
+export default Organizador;

@@ -1,4 +1,4 @@
-import Participante from './Participantes.js';
+import Participante from './Participante.js';
 import Evento from './Evento.js';
 import Ingresso from './Ingresso.js';
 

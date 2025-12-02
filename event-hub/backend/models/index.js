@@ -1,5 +1,5 @@
-import Organizador from './Organizadores.js';
-import Participante from './Participantes.js';
+import Organizador from './Organizador.js';
+import Participante from './Participante.js';
 import Evento from './Evento.js';
 import Ingresso from './Ingresso.js';
 
