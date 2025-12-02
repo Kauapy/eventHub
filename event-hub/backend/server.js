@@ -7,7 +7,6 @@ app.use(cors())
 app.use(express.json())
 
 const sequelize = require('./config/database')
-
 const authRoutes = require('./routes/authRoutes')
 const participantesRoutes = require('./routes/participantesRoutes')
 

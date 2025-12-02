@@ -4,19 +4,28 @@ const JWT_SECRET = process.env.JWT_SECRET || 'segredo_super_secreto'
 module.exports = (req, res, next) => {
     const authHeader = req.headers.authorization
 
-    if (!authHeader){
+    if (!authHeader) {
         return res.status(401).json({ message: 'Token não fornecido.' })
     }
 
     const [bearer, token] = authHeader.split(' ')
-    if(bearer !== 'Bearer'){
+
+    if (!token) {
+        return res.status(401).json({ message: 'Token ausente.' })
+    }
+
+    if (bearer.toLowerCase() !== 'bearer') {
         return res.status(401).json({ message: 'Formato do Token inválido.' })
     }
-    try{
+
+    try {
         const decoded = jwt.verify(token, JWT_SECRET)
         req.user = decoded
         next()
-    }catch(error){
-        return res.status(401).json({ message: 'Token inválido ou expirado.' })
+    } catch (error) {
+        if (error.name === 'TokenExpiredError') {
+            return res.status(401).json({ message: 'Token expirado.' })
+        }
+        return res.status(401).json({ message: 'Token inválido.' })
     }
 }

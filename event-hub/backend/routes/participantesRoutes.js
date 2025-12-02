@@ -1,13 +1,19 @@
 const express = require('express')
 const router = express.Router()
-const controller = require('../controllers/participantesController')
+const participantesController = require('../controllers/participantesController')
+const authMiddleware = require('../middlewares/authMiddleware')
+const checkRole = require("../middlewares/checkRole")
 
-router.get('/', controller.listar)
-router.get('/:id', controller.buscarUm)
-router.post('/', controller.criar)
-router.put('/:id', controller.atualizar)
-router.delete('/:id', controller.deletar)
 
-router.get('/:id/historico', controller.historico)
+router.use(authMiddleware)
+
+
+router.get('/', participantesController.listarParticipantes)
+router.get('/:id', participantesController.buscarParticipante)
+
+
+router.post('/', checkRole("organizador"), participantesController.criarParticipante)
+router.put('/:id', checkRole("organizador"), participantesController.atualizarParticipante)
+router.delete('/:id', checkRole("organizador"), participantesController.deletarParticipante)
 
 module.exports = router
